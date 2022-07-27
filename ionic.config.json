@@ -1,0 +1,8 @@
+{
+  "name": "ObsidianGeoHelper",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue",
+  "id": "9cf0eb90"
+}

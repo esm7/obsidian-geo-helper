@@ -1,0 +1,6 @@
+{
+	"appId": "io.ionic.starter",
+	"appName": "ObsidianGeoHelper",
+	"webDir": "dist",
+	"bundledWebRuntime": false
+}
