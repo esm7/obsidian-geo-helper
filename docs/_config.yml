@@ -1,2 +1,2 @@
-theme: jekyll-theme-minimal
 include: [".well-known"]
+theme: jekyll-theme-minimal

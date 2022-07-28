@@ -1,5 +1,5 @@
 [{
   "relation": ["delegate_permission/common.handle_all_urls"],
-  "target" : { "namespace": "android_app", "package_name": "com.esm.map-view-geo-helper",
+  "target" : { "namespace": "android_app", "package_name": "com.esm.mvgeohelper",
                "sha256_cert_fingerprints": ["0D:D4:C9:9D:20:B9:03:70:A7:32:55:A8:E1:51:3A:0B:5E:A1:52:B9:33:40:BC:5C:2C:C2:F0:25:F0:AD:E3:EE"] }
 }]
