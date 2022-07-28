@@ -10,13 +10,18 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "@capacitor/app": "1.1.1",
+    "@awesome-cordova-plugins/geolocation": "^5.44.0",
+    "@capacitor/android": "3.6.0",
+    "@capacitor/app": "^1.1.1",
     "@capacitor/core": "3.6.0",
-    "@capacitor/haptics": "1.1.4",
-    "@capacitor/keyboard": "1.2.3",
-    "@capacitor/status-bar": "1.0.8",
+    "@capacitor/haptics": "^1.1.4",
+    "@capacitor/keyboard": "^1.2.3",
+    "@capacitor/status-bar": "^1.0.8",
+    "@ionic-native/geolocation": "^5.36.0",
+    "@ionic-native/native-geocoder": "^5.36.0",
     "@ionic/vue": "^6.0.0",
     "@ionic/vue-router": "^6.0.0",
+    "cordova-plugin-geolocation": "^4.1.0",
     "core-js": "^3.6.5",
     "vue": "^3.2.21",
     "vue-router": "^4.0.12"
@@ -38,8 +43,8 @@
     "@vue/vue3-jest": "^27.0.0-alpha.3",
     "babel-jest": "^27.3.1",
     "cypress": "^8.7.0",
-    "eslint": "^8.4.1",
-    "eslint-plugin-vue": "^8.2.0",
+    "eslint": "^8.20.0",
+    "eslint-plugin-vue": "^8.7.1",
     "jest": "^27.3.1",
     "ts-jest": "^27.0.7",
     "typescript": "^4.3.5"
