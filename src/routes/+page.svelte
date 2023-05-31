@@ -63,7 +63,7 @@
 			if (platform === 'web') {
 				console.log('Asked for web-based location');
 				const webPosition: GeolocationPosition = await new Promise((resolve, reject) =>
-					navigator.geolocation.getCurrentPosition(resolve, reject));
+					navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true }));
 				foundLocation = webPosition;
 			} else {
 				console.log('Asked for mobile-based location');
