@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import Paper, { Title, Subtitle, Content } from '@smui/paper';
 	import LinearProgress from '@smui/linear-progress';
 	import Button, { Label } from '@smui/button';
@@ -7,7 +8,6 @@
 		Row,
 		Section,
 		Title as BarTitle,
-		AutoAdjust,
 	} from '@smui/top-app-bar';
 	import { Capacitor } from '@capacitor/core';
 	import { App } from '@capacitor/app'
@@ -28,8 +28,31 @@
 	});
 
 	function sendLocationToObsidian(pos: Position) {
-        const url = `obsidian://mapview?do=update-real-time-location&centerLat=${pos.coords.latitude}&centerLng=${pos.coords.longitude}&accuracy=${pos.coords.accuracy}&source='geohelper'`;
+		const params = getParams();
+		let url = `obsidian://mapview?centerLat=${pos.coords.latitude}&centerLng=${pos.coords.longitude}&accuracy=${pos.coords.accuracy}&source=geohelper`;
+		// The context is meant to be returned to Map View
+		if (params?.mvaction) url += `&mvaction=${params.mvaction}`;
+		if (params?.mvcontext) url += `&mvcontext=${params.mvcontext}`;
 		open(url);
+	}
+
+	type Params = {
+		// Action required by Geohelper
+		geoaction?: string | null;
+		// Action required by Map View when it receives the location
+		mvaction?: string | null;
+		// Additional context Map View may want to receive
+		mvcontext?: string | null;
+	};
+
+	function getParams(): Params {
+		const searchParams = $page?.url?.searchParams;
+		if (!searchParams) return {};
+		return {
+			geoaction: searchParams.get('geoaction'),
+			mvaction: searchParams.get('mvaction'),
+			mvcontext: searchParams.get('mvcontext')
+		}
 	}
 
 	async function getLocation() {
@@ -38,10 +61,12 @@
 		try {
 			const platform = Capacitor.getPlatform();
 			if (platform === 'web') {
+				console.log('Asked for web-based location');
 				const webPosition: GeolocationPosition = await new Promise((resolve, reject) =>
 					navigator.geolocation.getCurrentPosition(resolve, reject));
 				foundLocation = webPosition;
 			} else {
+				console.log('Asked for mobile-based location');
 				const geolocation: Position = await Geolocation.getCurrentPosition();
 				foundLocation = geolocation;
 			}
