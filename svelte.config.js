@@ -9,11 +9,11 @@ const config = {
 
 	kit: {
 		adapter: adapter(),
+		// See https://github.com/metonym/sveltekit-gh-pages
+		paths: {
+			base: process.env.NODE_ENV === "production" ? "/obsidian-geo-helper" : "",
+		}
 	},
-	// See https://github.com/metonym/sveltekit-gh-pages
-	paths: {
-		base: process.env.NODE_ENV === "production" ? "/obsidian-geo-helper" : "",
-	}
 };
 
 export default config;
