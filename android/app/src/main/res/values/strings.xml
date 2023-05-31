@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Map View GeoHelper</string>
+    <string name="title_activity_main">obsidian-geo-helper</string>
+    <string name="package_name">com.esm.geohelper</string>
+    <string name="custom_url_scheme">geohelper</string>
+</resources>
