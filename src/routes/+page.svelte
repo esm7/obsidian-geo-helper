@@ -14,26 +14,31 @@
 	import { Geolocation } from '@capacitor/geolocation';
 	import type { Position } from '@capacitor/geolocation';
 
-	let working = true;
-	let success = false;
+	let working = false;
+	let success = true;
 	let errorMessage = '';
 	let foundLocation: Position | null = null;
 	let topBar: TopAppBar;
 
-	getLocation();
+	const isMobile = Capacitor.getPlatform() != 'web';
 
 	App.addListener('appUrlOpen', data => {
-		alert('URLopen with:' + data.url);
-		console.log('data:', data);
+		const url = new URL(data.url);
+		getLocation(url);
 	});
 
-	function sendLocationToObsidian(pos: Position) {
-		const params = getParams();
+	function sendLocationToObsidian(pos: Position, params: Params) {
 		let url = `obsidian://mapview?centerLat=${pos.coords.latitude}&centerLng=${pos.coords.longitude}&accuracy=${pos.coords.accuracy}&source=geohelper`;
 		// The context is meant to be returned to Map View
 		if (params?.mvaction) url += `&mvaction=${params.mvaction}`;
 		if (params?.mvcontext) url += `&mvcontext=${params.mvcontext}`;
 		open(url);
+	}
+
+	function sendLastLocationToObsidian() {
+		const params = { mvaction: 'showonmap' };
+		if (foundLocation)
+			sendLocationToObsidian(foundLocation, params);
 	}
 
 	type Params = {
@@ -45,8 +50,8 @@
 		mvcontext?: string | null;
 	};
 
-	function getParams(): Params {
-		const searchParams = $page?.url?.searchParams;
+	function getParams(calledWithUrl: URL): Params {
+		const searchParams = calledWithUrl.searchParams;
 		if (!searchParams) return {};
 		return {
 			geoaction: searchParams.get('geoaction'),
@@ -55,29 +60,37 @@
 		}
 	}
 
-	async function getLocation() {
+	async function getLocation(calledWithUrl: URL | null = null) {
 		working = true;
 		success = false;
 		try {
-			const platform = Capacitor.getPlatform();
-			if (platform === 'web') {
+			if (!isMobile) {
 				console.log('Asked for web-based location');
 				const webPosition: GeolocationPosition = await new Promise((resolve, reject) =>
 					navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true }));
 				foundLocation = webPosition;
 			} else {
 				console.log('Asked for mobile-based location');
-				const geolocation: Position = await Geolocation.getCurrentPosition();
+				const geolocation: Position = await Geolocation.getCurrentPosition({ enableHighAccuracy: true });
 				foundLocation = geolocation;
 			}
 			working = false;
 			success = true;
-			sendLocationToObsidian(foundLocation);
+			if (calledWithUrl) {
+				const params = getParams(calledWithUrl);
+				sendLocationToObsidian(foundLocation, params);
+			}
 		} catch (e) {
 			working = false;
 			success = false;
-			errorMessage = (e as any)?.message;
+			errorMessage = 'Unable to determine your location: ' + (e as any)?.message;
 		}
+	}
+
+	// On mobile we wait for an incoming URL (in addListener above) for finding the location.
+	// On web we start when the page is loaded.
+	if (!isMobile && $page?.url && $page.url?.searchParams.get('geoaction')) {
+		getLocation($page.url);
 	}
 </script>
 
@@ -120,16 +133,19 @@
 							<Label>{foundLocation.coords.latitude}, {foundLocation.coords.longitude}</Label>
 						</Button>
 						(accuracy = {foundLocation.coords.accuracy})
-					{:else}
+						<Button variant="raised" on:click={() => sendLastLocationToObsidian()}>
+							<Label>Focus in Map View</Label>
+						</Button>
+					{:else if !success}
 						<Paper color="custom-red">
-							Unable to determine your location: {errorMessage}
+							{errorMessage}
 						</Paper>
 					{/if}
 				</p>
 				<p>
-					<Button variant="raised" on:click={() => getLocation()}>
-						<Label>Refresh</Label>
-					</Button>
+				<Button variant="raised" on:click={() => getLocation()}>
+					<Label>Find Location</Label>
+				</Button>
 				</p>
 			{/if}
 		</Content>

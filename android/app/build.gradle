@@ -15,6 +15,11 @@ android {
             ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "obsidian-geo-helper-${variant.name}-${variant.versionName}.apk"
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
