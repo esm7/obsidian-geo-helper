@@ -42,11 +42,14 @@
 		"@capacitor/cli": "^4.6.3",
 		"@capacitor/core": "^4.6.3",
 		"@capacitor/geolocation": "^4.1.0",
+		"@smui-extra/accordion": "^7.0.0-beta.8",
 		"@smui/button": "^7.0.0-beta.0",
+		"@smui/icon-button": "^7.0.0-beta.8",
 		"@smui/linear-progress": "^7.0.0-beta.0",
 		"@smui/paper": "^7.0.0-beta.0",
 		"@smui/snackbar": "^7.0.0-beta.0",
 		"@smui/top-app-bar": "^7.0.0-beta.0",
+		"lucide-svelte": "^0.233.0",
 		"svelte-material-ui": "^7.0.0-beta.0"
 	}
 }
