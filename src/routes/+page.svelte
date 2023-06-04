@@ -15,6 +15,7 @@
 	import { App } from '@capacitor/app'
 	import { Geolocation } from '@capacitor/geolocation';
 	import type { Position } from '@capacitor/geolocation';
+	import { Clipboard } from '@capacitor/clipboard';
 	import { MapPin, Copy, Edit, ChevronUp, ChevronDown, Plus } from 'lucide-svelte';
 
 	let working = false;
@@ -39,35 +40,29 @@
 		open(url);
 	}
 
-	function sendLastLocationToObsidian() {
-		const params: Params = { mvaction: 'showonmap' };
-		if (foundLocation)
-			sendLocationToObsidian(foundLocation, params);
-	}
-
 	function copyAsInlineLocation() {
 		if (!foundLocation) return;
 		const s = `[](geo:${foundLocation.coords.latitude},${foundLocation.coords.longitude})`;
-		navigator.clipboard.writeText(s);
+		if (isMobile) Clipboard.write({ string: s });
+		else navigator.clipboard.writeText(s);
 		//@ts-ignore
 		copySnack.open();
 	}
 
-	function newNoteHere() {
-		const params: Params = { mvaction: 'newnotehere' };
+	function sendLocationWithAction(mvaction: MapViewGpsAction) {
+		const params: Params = { mvaction: mvaction };
 		if (foundLocation)
 			sendLocationToObsidian(foundLocation, params);
 	}
 
-	function addToCurrentNote() {
-		const params: Params = { mvaction: 'addtocurrentnote' };
-		if (foundLocation)
-			sendLocationToObsidian(foundLocation, params);
-	}
-
-	// Should be the same between obsidian-map-view and obsidian-geo-helper
+// Should be the same between obsidian-map-view and obsidian-geo-helper
 	type GeoHelperAction = 'locate';
-	type MapViewGpsAction = 'showonmap' | 'newnotehere' | 'addtocurrentnote' | 'copyinlinelocation';
+	type MapViewGpsAction =
+		| 'showonmap'
+		| 'newnotehere'
+		| 'addtocurrentnotefm'
+		| 'addtocurrentnoteinline'
+		| 'copyinlinelocation';
 
 	// Should be the same between obsidian-map-view and obsidian-geo-helper
 	type Params = {
@@ -142,7 +137,7 @@
 			<Paper color="primary" variant="outlined">
 				<p>This app provides your location to Map View from outside Obsidian (because Obsidian's permissions don't allow it to be fetched internally).</p>
 				<p>It runs completely locally and does not send anything to any server.</p>
-
+				<p><b>Location and popup permissions must be enabled for this to work.</b></p>
 				<Accordion>
 					<Panel bind:open={instructionsOpen}>
 						<Header>
@@ -153,11 +148,22 @@
 							</IconButton>
 						</Header>
 						<Content>
+							{#if isMobile}
+								<p>
+									Either click "Find Location" below, or launch this from the various GPS-enabled Map View commands in Obsidian.
+								</p>
+								<p>
+									You may need to permit location access and later also the launching of the `obsidian://` link that calls back Map View.
+								</p>
+							{:else}
 							<ol>
 								<li>Allow the location permission when asked.</li>
 								<li>When a location is found, allow the browser popup (you may need to find the "popup is blocked" notification) and allow opening the `obsidian://` link.</li>
 								<li>If you 'always allow' both of these, it will be smoother next time.</li>
 							</ol>
+							<p>Some browsers and platforms receive location better than others. See the <a href="https://github.com/esm7/obsidian-geo-helper">documentation</a> for more information.</p>
+							<p>Also, if you're using Android, consider downloading this as an app for the best results.</p>
+						{/if}
 						</Content>
 					</Panel>
 				</Accordion>
@@ -172,25 +178,32 @@
 							Found location: <Label>{foundLocation.coords.latitude}, {foundLocation.coords.longitude}</Label>
 							(accuracy = {foundLocation.coords.accuracy})
 							<br>
-							<Button variant="outlined" class="iconbutton" on:click={() => sendLastLocationToObsidian()}>
-								<Icon><MapPin/></Icon>
-								<Label>Focus in Map View</Label>
-							</Button>
-							<br>
-							<Button variant="outlined" class="iconbutton" on:click={() => copyAsInlineLocation()}>
-								<Icon><Copy/></Icon>
-								<Label>Copy as Inline Location</Label>
-							</Button>
-							<br>
-							<Button variant="outlined" class="iconbutton" on:click={() => newNoteHere()}>
-								<Icon><Edit/></Icon>
-								<Label>New Note Here (front matter)</Label>
-							</Button>
-							<br>
-							<Button variant="outlined" class="iconbutton" on:click={() => addToCurrentNote()}>
-								<Icon><Plus/></Icon>
-								<Label>Add to Current Note (front matter)</Label>
-							</Button>
+							<div class="button-container">
+								<Button variant="outlined" class="iconbutton" on:click={() => sendLocationWithAction('showonmap')}>
+									<Icon><MapPin/></Icon>
+									<Label>Focus in Map View</Label>
+								</Button>
+								<br>
+								<Button variant="outlined" class="iconbutton" on:click={() => copyAsInlineLocation()}>
+									<Icon><Copy/></Icon>
+									<Label>Copy as Inline Location</Label>
+								</Button>
+								<br>
+								<Button variant="outlined" class="iconbutton" on:click={() => sendLocationWithAction('addtocurrentnoteinline')}>
+									<Icon><Plus/></Icon>
+									<Label>Add to Current Note (inline)</Label>
+								</Button>
+								<br>
+								<Button variant="outlined" class="iconbutton" on:click={() => sendLocationWithAction('newnotehere')}>
+									<Icon><Edit/></Icon>
+									<Label>New Note Here (front matter)</Label>
+								</Button>
+								<br>
+								<Button variant="outlined" class="iconbutton" on:click={() => sendLocationWithAction('addtocurrentnotefm')}>
+									<Icon><Plus/></Icon>
+									<Label>Add to Current Note (front matter)</Label>
+								</Button>
+							</div>
 						</Paper>
 					{:else if !success}
 						<Paper color="custom-red">
@@ -233,6 +246,12 @@
 	}
 	:global(.iconbutton i) {
 		top: -3px;
+	}
+
+	:global(.button-container .iconbutton) {
+		margin: 1px;
+		height: auto;
+		min-height: 2.5em;
 	}
 </style>
 
