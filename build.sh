@@ -10,5 +10,5 @@ cd ..
 cp android/app/build/outputs/apk/debug/*.apk build/
 
 # --- Github Pages ---
-npm run build
-cp -r build/* docs/
+# npm run build
+# cp -r build/* docs/
