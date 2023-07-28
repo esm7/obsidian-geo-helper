@@ -5,7 +5,7 @@
 This is an accompanying app to [Obsidian Map View](https://github.com/esm7/obsidian-map-view), a plugin for Obsidian.md that introduces mapping functionality.
 It adds to Map View the missing functionality of getting the user's real-time location -- see [here](https://github.com/esm7/obsidian-map-view#gps-location-support) why it's needed and how to use it from inside Map View.
 
-The Geo Helper app currently comes in two variants: a web app [launched from here](https://esm7.github.io/obsidian-geo-helper) and an [Android app](https://github.com/esm7/obsidian-geo-helper/releases).
+The Geo Helper app currently comes in two variants: a web app [launched from here](https://esm7.github.io/obsidian-geo-helper) and an [Android app](#android-app).
 
 No matter how you use it, the app runs completely locally and does not send your location to any server.
 Feel free to inspect the code and improve it.
