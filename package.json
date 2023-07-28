@@ -1,5 +1,6 @@
 {
 	"name": "obsidian-geo-helper",
+	"//": "Sync the below version with the one in build.gradle",
 	"version": "0.0.1",
 	"scripts": {
 		"dev": "vite dev",
