@@ -1,7 +1,7 @@
 {
 	"name": "obsidian-geo-helper",
 	"//": "Sync the below version with the one in build.gradle",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
@@ -50,6 +50,7 @@
 		"@smui/linear-progress": "^7.0.0-beta.8",
 		"@smui/paper": "^7.0.0-beta.8",
 		"@smui/snackbar": "^7.0.0-beta.8",
+		"@smui/textfield": "^7.0.0",
 		"@smui/top-app-bar": "^7.0.0-beta.8",
 		"lucide-svelte": "^0.234.0",
 		"svelte-material-ui": "^7.0.0-beta.8"

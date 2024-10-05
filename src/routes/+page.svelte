@@ -16,12 +16,14 @@
 	import { Geolocation } from '@capacitor/geolocation';
 	import type { Position } from '@capacitor/geolocation';
 	import { Clipboard } from '@capacitor/clipboard';
-	import { MapPin, Copy, Edit, ChevronUp, ChevronDown, Plus } from 'lucide-svelte';
+	import { MapPin, Copy, Edit, ChevronUp, ChevronDown, Plus, Type } from 'lucide-svelte';
+	import TextField from '@smui/textfield';
 
 	let working = false;
 	let success = true;
 	let errorMessage = '';
 	let foundLocation: Position | null = null;
+	let locationName = '';
 	let topBar: TopAppBar;
 	const isMobile = Capacitor.getPlatform() != 'web';
 	let copySnack: Snackbar;
@@ -34,6 +36,8 @@
 
 	function sendLocationToObsidian(pos: Position, params: Params) {
 		let url = `obsidian://mapview?centerLat=${pos.coords.latitude}&centerLng=${pos.coords.longitude}&accuracy=${pos.coords.accuracy}&source=geohelper`;
+		if (locationName && locationName.length > 0)
+			url += `&label=${locationName}`;
 		// The context is meant to be returned to Map View
 		if (params?.mvaction) url += `&mvaction=${params.mvaction}`;
 		if (params?.mvcontext) url += `&mvcontext=${params.mvcontext}`;
@@ -42,7 +46,7 @@
 
 	function copyAsInlineLocation() {
 		if (!foundLocation) return;
-		const s = `[](geo:${foundLocation.coords.latitude},${foundLocation.coords.longitude})`;
+		const s = `[${locationName}](geo:${foundLocation.coords.latitude},${foundLocation.coords.longitude})`;
 		if (isMobile) Clipboard.write({ string: s });
 		else navigator.clipboard.writeText(s);
 		//@ts-ignore
@@ -178,6 +182,11 @@
 							Found location: <Label>{foundLocation.coords.latitude}, {foundLocation.coords.longitude}</Label>
 							(accuracy = {foundLocation.coords.accuracy})
 							<br>
+							<div class="text-field-container">
+								<TextField variant="filled" bind:value={locationName} label="Location label (optional)">
+									<Icon slot="leadingIcon"><Type/></Icon>
+								</TextField>
+							</div>
 							<div class="button-container">
 								<Button variant="outlined" class="iconbutton" on:click={() => sendLocationWithAction('showonmap')}>
 									<Icon><MapPin/></Icon>
