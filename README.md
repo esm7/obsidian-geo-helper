@@ -1,5 +1,8 @@
 # Obsidian Map View Geo Helper
 
+> [!NOTE]
+> This project is now deprecated, as Obsidian Mobile added proper location permissions in version 1.11 and Map View now supports it directly.
+
 ## Intro
 
 This is an accompanying app to [Obsidian Map View](https://github.com/esm7/obsidian-map-view), a plugin for Obsidian.md that introduces mapping functionality.
